@@ -1,0 +1,6 @@
+{
+  "localstack": {
+    "edgePort": 4566,
+    "host": "localhost"
+  }
+}
