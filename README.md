@@ -1,5 +1,20 @@
 # Fleet Emission Calculator
 
+### Setup
+
+- Start localstack
+
+```bask
+localstack start
+```
+
+- Deploy to localstack
+
+```bash
+npm run cdk:local bootstrap
+npm run cdk:local deploy
+```
+
 ### Best Practices
 
 Standardize pk and sk formats: Using a consistent format for pk and sk allows for better organization and more predictable queries. For example, you could use:

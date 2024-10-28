@@ -51,6 +51,11 @@ export const getVehicleDataByCreationTimeController = async (
         statusCode: 200,
         body: JSON.stringify(data),
       };
+    } else {
+      return {
+        statusCode: 400,
+        body: JSON.stringify(`Bad Request`),
+      };
     }
   } catch (error) {
     return {
