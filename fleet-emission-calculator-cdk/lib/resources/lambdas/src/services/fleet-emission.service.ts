@@ -12,7 +12,7 @@ export class FleetEmissionService {
   }
 
   async getVehicleEmissionData(vehicleNumber: string, creationTime: number) {
-    await this.fleetEmissionRepository.getVehicleEmissionData(
+    return await this.fleetEmissionRepository.getVehicleEmissionData(
       vehicleNumber,
       creationTime
     );

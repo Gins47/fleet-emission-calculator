@@ -46,7 +46,11 @@ export const getVehicleDataByCreationTimeController = async (
         vehicleNumber,
         parseInt(creationTime)
       );
-
+      console.log(
+        `getVehicleDataByCreationTimeController: result == ${JSON.stringify(
+          data
+        )}`
+      );
       return {
         statusCode: 200,
         body: JSON.stringify(data),

@@ -5,8 +5,11 @@
     "lib": [
       "es2020",
       "dom"
-    ],
-    "declaration": true,
+    ], 
+    "outDir": "./dist", 
+    "rootDir": "./lib/resources/lambdas/src", 
+    "declaration": true, 
+    "incremental": true,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -24,6 +27,10 @@
       "./node_modules/@types"
     ]
   },
+  "include": [
+   
+    "lib/resources/lambdas/src/**/*.ts" 
+  ],
   "exclude": [
     "node_modules",
     "cdk.out"

@@ -29,6 +29,9 @@ export class FleetEmissionRepository {
         TableName: this.tableName,
         Item: data,
       };
+      console.log(
+        `createVehicleEmissionData == params = ${JSON.stringify(params)}`
+      );
       await this.dynamodb.put(params).promise();
     } catch (error) {
       console.error(
@@ -58,7 +61,15 @@ export class FleetEmissionRepository {
         },
       };
 
-      await this.dynamodb.get(params).promise();
+      console.log(
+        `getVehicleEmissionData == params = ${JSON.stringify(params)}`
+      );
+      const result = await this.dynamodb.get(params).promise();
+
+      console.log(
+        `getVehicleEmissionData ==  Data result= ${JSON.stringify(result)}`
+      );
+      return result;
     } catch (error) {
       console.error(
         `Error:FleetEmissionRepository:getVehicleEmissionData = ${error}`
