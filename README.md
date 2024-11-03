@@ -1,10 +1,10 @@
-##Introduction
+## Introduction
 
 This project is a Fleet Emission Data Management System designed to track and manage emissions data for various vehicles within a fleet. Built using AWS infrastructure, the project leverages `AWS Lambda` for serverless compute, `DynamoDB` for highly scalable storage, and `Amazon SQS` for asynchronous message queuing. The application is developed with modular code and follows a well-defined structure to enhance reusability, maintainability, and scalability. By using `TypeScript`, we ensure strong type-checking, which helps maintain code quality and minimize runtime errors.
 
 For local AWS development and testing we will be making use of **LocalStack**.
 
-##Prerequisites
+## Prerequisites
 
 Make sure that you have the following installed in you local development setup.
 
@@ -15,17 +15,17 @@ Make sure that you have the following installed in you local development setup.
 
 For this project we will be using AWS CDK for the infrastructure setup and deployment.
 
-###Install AWS CDK
+### Install AWS CDK
 
 ```Bash
 npm install -g aws-cdk
 ```
 
-##Architecture Diagram
+## Architecture Diagram
 
 ![High level architecture diagram](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/k2kqdbjx4vr0v1n4i9rh.png)
 
-##DynamoDB Table Design
+## DynamoDB Table Design
 
 The DynamoDB table uses a standardized approach to defining the **partition key (pk)** and **sort key (sk)** to make it adaptable for multiple data entities. This structure allows us to store and retrieve different types of data (e.g., vehicle data, company data) while keeping the data organized and easily queryable.
 
@@ -42,7 +42,7 @@ This structure allows the table to support multiple entities (such as vehicles a
 
 ## Project Setup
 
-###Project Structure
+### Project Structure
 
 I followed clean architecture principles, with separate folders for handlers, controllers, models, repositories, services, and error handling. Below is a breakdown of each main folder and its purpose:
 
@@ -61,7 +61,8 @@ I followed clean architecture principles, with separate folders for handlers, co
   - `getVehicleDataLambda.ts`: Retrieves vehicle data by vehicleNumber and CreationTime.
   - `publishEmissionData.ts`: Publishes emission data to an SQS queue.
 
-###AWS CDK Stack
+### AWS CDK Stack
+
 By using AWS CDK we can create the required resources very easily. Below, you can find the way to create various AWS resources using AWS CDK.
 
 - API Gateway
@@ -183,7 +184,7 @@ Now lets link this lambda function to API Gateway.
     );
 ```
 
-###Deployment to LocalStack
+### Deployment to LocalStack
 
 Lets start the localstack using the command below
 
@@ -209,7 +210,7 @@ Now, Lets deploy the project to localStack using the command below.
 npm run cdk:local deploy
 ```
 
-###API Endpoints
+### API Endpoints
 
 | Method | Endpoint                                       | Description                           |
 | ------ | ---------------------------------------------- | ------------------------------------- |
@@ -217,7 +218,7 @@ npm run cdk:local deploy
 | POST   | `/vehicle`                                     | Create new vehicle Emission Data      |
 | POST   | `/vehicle/sqs`                                 | Publish emission data to SQS          |
 
-###API Test
+### API Test
 
 - Create vehicle data
 
