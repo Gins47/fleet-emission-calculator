@@ -4,6 +4,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 
 export class FleetEmissionStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -31,7 +32,18 @@ export class FleetEmissionStack extends cdk.Stack {
       tableName: "FleetEmissionData",
     });
 
-    // create vehicle Data Lambda
+    // GSI : Vehicle company and Vehicle Type
+    table.addGlobalSecondaryIndex({
+      indexName: "VehicleCompanyTypeIndex",
+      partitionKey: {
+        name: "vehicleCompany",
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: { name: "vehicleType", type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
+
+    // Create vehicle Data Lambda
 
     const createVehicleDataFunction = new lambda.Function(
       this,
@@ -52,7 +64,52 @@ export class FleetEmissionStack extends cdk.Stack {
     const vehicle = api.root.addResource("vehicle");
     vehicle.addMethod("POST", new LambdaIntegration(createVehicleDataFunction));
 
-    // get vehicle Data Lambda
+    // Publish vehicle Data Lambda
+
+    const publishVehicleDataFunction = new lambda.Function(
+      this,
+      `publishVehicleDataFunction`,
+      {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        memorySize: 128,
+        timeout: cdk.Duration.seconds(100),
+        architecture: lambda.Architecture.X86_64,
+        handler: "publishEmissionData.handler",
+        code: lambda.Code.fromAsset("dist/handlers"),
+        environment: {
+          QUEUE_URL: queue.queueUrl,
+        },
+      }
+    );
+    queue.grantSendMessages(publishVehicleDataFunction);
+
+    const publishResource = vehicle.addResource("publish");
+    publishResource.addMethod(
+      "POST",
+      new LambdaIntegration(publishVehicleDataFunction)
+    );
+
+    // Consume fleet emission data
+
+    const sqsConsumerFunction = new lambda.Function(
+      this,
+      "sqsConsumerFunction",
+      {
+        runtime: lambda.Runtime.NODEJS_20_X,
+        handler: "consumeEmissionData.handler",
+        code: lambda.Code.fromAsset("dist/handlers"),
+        environment: {
+          DYNAMODB_TABLE: table.tableName,
+          QUEUE_URL: queue.queueUrl,
+        },
+      }
+    );
+    table.grantWriteData(sqsConsumerFunction);
+    sqsConsumerFunction.addEventSource(
+      new lambdaEventSources.SqsEventSource(queue, {})
+    );
+
+    // Get vehicle Data Lambda
 
     const getVehicleDataFunction = new lambda.Function(
       this,

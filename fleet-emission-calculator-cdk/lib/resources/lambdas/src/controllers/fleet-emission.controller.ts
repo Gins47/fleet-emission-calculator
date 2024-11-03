@@ -70,3 +70,29 @@ export const getVehicleDataByCreationTimeController = async (
     };
   }
 };
+
+/**
+ *
+ * @param event
+ * @returns
+ */
+export const publishToSQS = async (event: APIGatewayProxyEvent) => {
+  const fleetEmissionService = new FleetEmissionService();
+  try {
+    const body = JSON.parse(event.body!);
+    await fleetEmissionService.publishFleetEmissionDataToSQS(body);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "Fleet emission data published to queue successfully",
+      }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Error publishing emission data to queue",
+      }),
+    };
+  }
+};
